@@ -25,14 +25,10 @@ function wpte_add_column_selection_and_export_button() {
         const columnsLabel = $('<span class="wpte-label"></span>');
         const rowsLabel = $('<span class="wpte-label"></span>');
 
-        // Buttons
-        const startSelectionText = "Start Selection";
-        const stopSelectionText = "Stop Selection";
-        const selectButton = $(`<button type="button" class="button">${startSelectionText}</button>`);
+        // Button
         const exportButton = $('<button type="button" class="button" style="display: none;">Export Selected</button>');
 
         $cardInside.append($cardTitle);
-        $cardInside.append(selectButton);
         $cardInside.append(columnsLabel);
         $cardInside.append(rowsLabel);
         $cardInside.append(exportButton);
@@ -42,28 +38,14 @@ function wpte_add_column_selection_and_export_button() {
         let selectedColumns = [], selectedRows = [];
 
         // Handle 'Select Columns' button click
-        selectButton.on("click", function () {
-          event.preventDefault();
-
-          // Toggle selection mode
-          if (!$(this).data("selection-mode")) {
-            $(this).data("selection-mode", true).text(startSelectionText);
-            const columnCount = selectedColumns.length;
-            const rowsCount = selectedRows.length;
-            columnsLabel.text(columnCount + " columns selected").show();
-            rowsLabel.text(rowsCount + " rows selected").show();
-            $table.find("tr:first-child th").css("cursor", "pointer");
-            if (columnCount > 0 && rowsCount > 0) {
-              exportButton.show();
-            }
-          } else {
-            $(this).data("selection-mode", false).text(stopSelectionText);
-            columnsLabel.text("").hide();
-            rowsLabel.text("").hide();
-            $table.find("tr:first-child th").css("cursor", "default");
-            exportButton.hide();
-          }
-        });
+        const columnCount = selectedColumns.length;
+        const rowsCount = selectedRows.length;
+        columnsLabel.text(columnCount + " columns selected").show();
+        rowsLabel.text(rowsCount + " rows selected").show();
+        $table.find("tr:first-child th").css("cursor", "pointer");
+        if (columnCount > 0 && rowsCount > 0) {
+          exportButton.show();
+        }
 
         // Show or hide export button based on selection
         function showExportButton() {
@@ -85,33 +67,31 @@ function wpte_add_column_selection_and_export_button() {
         }
 
         // Handle column header click for selection
-        $table.find("tr:first-child th").on("click", function () {
-          if (selectButton.data("selection-mode")) {
-            const columnIndex = $(this).index();
-            
-            // Skip the checkbox column (index 0)
-            if (columnIndex === 0) {
-              return;
-            }
+        $table.find("tr:first-child th").on("click", function() {
+          const columnIndex = $(this).index();
 
-            const alreadySelected = selectedColumns.includes(columnIndex);
-
-            if (alreadySelected) {
-              // Deselect the column
-              selectedColumns = selectedColumns.filter(function (index) {
-                return index !== columnIndex;
-              });
-              toggleColumnSelection($table, columnIndex, false);
-            } else {
-              // Select the column
-              selectedColumns.push(columnIndex);
-              toggleColumnSelection($table, columnIndex, true);
-            }
-            columnsLabel.text(selectedColumns.length + " columns selected");
-
-            // Show or hide export button based on selection
-            showExportButton();
+          // Skip the checkbox column (index 0)
+          if (columnIndex === 0) {
+            return;
           }
+
+          const alreadySelected = selectedColumns.includes(columnIndex);
+
+          if (alreadySelected) {
+            // Deselect the column
+            selectedColumns = selectedColumns.filter(function(index) {
+              return index !== columnIndex;
+            });
+            toggleColumnSelection($table, columnIndex, false);
+          } else {
+            // Select the column
+            selectedColumns.push(columnIndex);
+            toggleColumnSelection($table, columnIndex, true);
+          }
+          columnsLabel.text(selectedColumns.length + " columns selected");
+
+          // Show or hide export button based on selection
+          showExportButton();
         });
 
         
@@ -211,6 +191,10 @@ function wpte_add_column_selection_and_export_button() {
       display: flex;
       align-items: center;
       column-gap: .5rem;
+    }
+
+    .wpte-inside span {
+      padding: 6px 0;
     }
 
     .button.wpte-label {

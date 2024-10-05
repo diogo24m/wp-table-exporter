@@ -4,7 +4,7 @@
 
 ## Description
 
-**WP Table Export** is a simple and efficient WordPress plugin that allows administrators to easily export table data from the WordPress admin dashboard into a CSV file. The plugin adds intuitive "Start Selection" and "Export Selected" buttons to tables within the admin dashboard, enabling you to export only the rows and columns you need.
+**WP Table Export** is a simple and efficient WordPress plugin that allows administrators to easily export table data from the WordPress admin dashboard into a CSV file. The plugin adds Table Export card to tables within the admin dashboard, enabling you to export only the rows and columns you need.
 
 ### Features
 
@@ -19,14 +19,13 @@
 1. Download the plugin.
 2. Upload the plugin files to the `/wp-content/plugins/wp-table-exporter/` directory, or install the plugin through the WordPress plugins screen directly.
 3. Activate the plugin through the 'Plugins' screen in WordPress.
-4. Go to any page in the admin dashboard that has a table, and you will see the "Start Selection" and "Export Selected" buttons.
+4. Go to any page in the admin dashboard that has a table, and you will see the Table Export card.
 
 ### Usage
 
-1. Click the "Start Selection" button above any table in the WordPress admin dashboard.
-2. Click on the table headers to select the columns you want to export.
-3. Click on the checkboxes to select the rows you want to export.
-4. Click "Export Selected" to download a CSV file containing the selected rows and columns.
+1. Click on the table headers to select the columns you want to export.
+2. Click on the checkboxes to select the rows you want to export.
+3. Click "Export Selected" button above any table in the WordPress admin dashboard to download a CSV file containing the selected rows and columns.
 
 ## Support
 
