@@ -1,0 +1,28 @@
+table.wp-list-table tr:first-child th {
+  cursor: pointer !important;
+}
+
+.wpte-postbox {
+  margin: 15px 0 !important;
+}
+
+.wpte-inside {
+  padding: 0 12px !important;
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.wpte-inside span {
+  padding: 6px 0;
+}
+
+.button.wpte-label {
+  margin: 5px;
+  display: inline-block;
+}
+
+.wpte-column-selected {
+  background-color: #d9edf7 !important;
+  /* Light blue background */
+}
