@@ -10,18 +10,21 @@ jQuery(document).ready(function ($) {
   }
 
   // Function to update selected rows
-  function updateSelectedRows(checkboxes, selected) {
-    selected = [];
+  function updateSelectedRows(checkboxes) {
+    const selected = [];
     checkboxes.filter(":checked").each(function () {
       selected.push($(this).closest("tr").index());
     });
+    return selected;
   }
 
-  // Function to show or hide export button based on selection
-  function showExportButton(exportButton, selectedColumns, selectedRows) {
-    if (selectedColumns.length > 0 && selectedRows.length > 0) {
+  // Function to show or hide buttons based on selection
+  function showButtons(removeButton, exportButton, columns, rows) {
+    if (columns.length > 0 && rows.length > 0) {
+      removeButton.show();
       exportButton.show();
     } else {
+      removeButton.hide();
       exportButton.hide();
     }
   }
@@ -53,7 +56,10 @@ jQuery(document).ready(function ($) {
     );
     const rowsLabel = $('<span class="wpte-label">0 rows selected</span>');
 
-    // Button
+    // Buttons
+    const removeSelectedButton = $(
+      '<button type="button" class="button" style="display: none;">Remove Selected</button>'
+    );
     const exportButton = $(
       '<button type="button" class="button" style="display: none;">Export Selected</button>'
     );
@@ -61,6 +67,7 @@ jQuery(document).ready(function ($) {
     $cardInside.append($cardTitle);
     $cardInside.append(columnsLabel);
     $cardInside.append(rowsLabel);
+    $cardInside.append(removeSelectedButton);
     $cardInside.append(exportButton);
     $cardContainer.append($cardInside);
     $table.before($cardContainer);
@@ -97,7 +104,12 @@ jQuery(document).ready(function ($) {
       columnsLabel.text(selectedColumns.length + " columns selected");
 
       // Show or hide export button based on selection
-      showExportButton(exportButton, selectedColumns, selectedRows);
+      showButtons(
+        removeSelectedButton,
+        exportButton,
+        selectedColumns,
+        selectedRows
+      );
     });
 
     // Find existing checkboxes or create new ones if needed
@@ -128,16 +140,53 @@ jQuery(document).ready(function ($) {
     $selectAllCheckbox.on("change", function () {
       const isChecked = $(this).prop("checked");
       $rowCheckboxes.prop("checked", isChecked);
-      updateSelectedRows($rowCheckboxes, selectedRows);
+      selectedRows = updateSelectedRows($rowCheckboxes);
       rowsLabel.text(selectedRows.length + " rows selected");
-      showExportButton(exportButton, selectedColumns, selectedRows);
+      showButtons(
+        removeSelectedButton,
+        exportButton,
+        selectedColumns,
+        selectedRows
+      );
     });
 
     // Handle individual row checkbox changes
     $rowCheckboxes.on("change", function () {
-      updateSelectedRows($rowCheckboxes, selectedRows);
+      selectedRows = updateSelectedRows($rowCheckboxes);
       rowsLabel.text(selectedRows.length + " rows selected");
-      showExportButton(exportButton, selectedColumns, selectedRows);
+      showButtons(
+        removeSelectedButton,
+        exportButton,
+        selectedColumns,
+        selectedRows
+      );
+    });
+
+    // Handle "Remove Selected" button click
+    removeSelectedButton.on("click", function (event) {
+      event.preventDefault();
+
+      // Remove selected columns
+      selectedColumns = [];
+      $table.find("tr").each(function () {
+        $(this).find("th, td").toggleClass("wpte-column-selected", false);
+      });
+
+      // Remove selected rows
+      $selectAllCheckbox.prop("checked", false);
+      $rowCheckboxes.prop("checked", false);
+
+      // Update labels
+      columnsLabel.text("0 columns selected");
+      rowsLabel.text("0 rows selected");
+
+      // Show or hide buttons based on selection
+      showButtons(
+        removeSelectedButton,
+        exportButton,
+        selectedColumns,
+        selectedRows
+      );
     });
 
     // Handle 'Export Selected' button click
