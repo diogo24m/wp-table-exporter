@@ -178,7 +178,7 @@ jQuery(document).ready(function ($) {
       // Gather data from selected columns and rows
       let data = [];
       $table.find("tr").each(function (rowIndex) {
-        if (selectedRows.includes(rowIndex)) {
+        if (selectedRows.includes(rowIndex - 1)) {
           let rowData = [];
           $(this)
             .find("th, td")
