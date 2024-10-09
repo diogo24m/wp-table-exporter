@@ -19,13 +19,12 @@ jQuery(document).ready(function ($) {
   }
 
   // Function to show or hide buttons based on selection
-  function showButtons(removeButton, exportButton, columns, rows) {
+  function showButtons($container, columns, rows) {
+    const buttons = $container.find("button");
     if (columns.length > 0 && rows.length > 0) {
-      removeButton.show();
-      exportButton.show();
+      buttons.show();
     } else {
-      removeButton.hide();
-      exportButton.hide();
+      buttons.hide();
     }
   }
 
@@ -57,7 +56,7 @@ jQuery(document).ready(function ($) {
     const rowsLabel = $('<span class="wpte-label">0 rows selected</span>');
 
     // Buttons
-    const removeSelectedButton = $(
+    const selectionButton = $(
       '<button type="button" class="button" style="display: none;">Remove Selected</button>'
     );
     const exportButton = $(
@@ -67,7 +66,7 @@ jQuery(document).ready(function ($) {
     $cardInside.append($cardTitle);
     $cardInside.append(columnsLabel);
     $cardInside.append(rowsLabel);
-    $cardInside.append(removeSelectedButton);
+    $cardInside.append(selectionButton);
     $cardInside.append(exportButton);
     $cardContainer.append($cardInside);
     $table.before($cardContainer);
@@ -90,26 +89,20 @@ jQuery(document).ready(function ($) {
 
       const alreadySelected = selectedColumns.includes(columnIndex);
 
+      // Handle column selection
       if (alreadySelected) {
-        // Deselect the column
-        selectedColumns = selectedColumns.filter(function (index) {
-          return index !== columnIndex;
-        });
-        toggleColumnSelection($table, columnIndex, false);
+        selectedColumns = selectedColumns.filter(
+          (index) => index !== columnIndex
+        );
       } else {
-        // Select the column
         selectedColumns.push(columnIndex);
-        toggleColumnSelection($table, columnIndex, true);
       }
-      columnsLabel.text(selectedColumns.length + " columns selected");
 
-      // Show or hide export button based on selection
-      showButtons(
-        removeSelectedButton,
-        exportButton,
-        selectedColumns,
-        selectedRows
-      );
+      toggleColumnSelection($table, columnIndex, !alreadySelected);
+      columnsLabel.text(`${selectedColumns.length} columns selected`);
+
+      // Show or hide buttons based on selection
+      showButtons($cardInside, selectedColumns, selectedRows);
     });
 
     // Find existing checkboxes or create new ones if needed
@@ -121,16 +114,11 @@ jQuery(document).ready(function ($) {
     } else {
       // Create new checkboxes
       $table.find("tr").each(function (index) {
-        var $row = $(this);
-        if (index === 0) {
-          $row.prepend(
-            '<th><input type="checkbox" class="wpte-select-all-checkbox"></th>'
-          );
-        } else {
-          $row.prepend(
-            '<td><input type="checkbox" class="wpte-row-checkbox"></td>'
-          );
-        }
+        $(this).prepend(
+          index === 0
+            ? '<th><input type="checkbox" class="wpte-select-all-checkbox"></th>'
+            : '<td><input type="checkbox" class="wpte-row-checkbox"></td>'
+        );
       });
       $selectAllCheckbox = $table.find(".wpte-select-all-checkbox");
       $rowCheckboxes = $table.find(".wpte-row-checkbox");
@@ -141,29 +129,23 @@ jQuery(document).ready(function ($) {
       const isChecked = $(this).prop("checked");
       $rowCheckboxes.prop("checked", isChecked);
       selectedRows = updateSelectedRows($rowCheckboxes);
-      rowsLabel.text(selectedRows.length + " rows selected");
-      showButtons(
-        removeSelectedButton,
-        exportButton,
-        selectedColumns,
-        selectedRows
-      );
+      rowsLabel.text(`${selectedRows.length} rows selected`);
+
+      // Show or hide buttons based on selection
+      showButtons($cardInside, selectedColumns, selectedRows);
     });
 
     // Handle individual row checkbox changes
     $rowCheckboxes.on("change", function () {
       selectedRows = updateSelectedRows($rowCheckboxes);
-      rowsLabel.text(selectedRows.length + " rows selected");
-      showButtons(
-        removeSelectedButton,
-        exportButton,
-        selectedColumns,
-        selectedRows
-      );
+      rowsLabel.text(`${selectedRows.length} rows selected`);
+
+      // Show or hide buttons based on selection
+      showButtons($cardInside, selectedColumns, selectedRows);
     });
 
-    // Handle "Remove Selected" button click
-    removeSelectedButton.on("click", function (event) {
+    // Handle selection button click
+    selectionButton.on("click", function (event) {
       event.preventDefault();
 
       // Remove selected columns
@@ -181,12 +163,7 @@ jQuery(document).ready(function ($) {
       rowsLabel.text("0 rows selected");
 
       // Show or hide buttons based on selection
-      showButtons(
-        removeSelectedButton,
-        exportButton,
-        selectedColumns,
-        selectedRows
-      );
+      showButtons($cardInside, selectedColumns, selectedRows);
     });
 
     // Handle 'Export Selected' button click
