@@ -48,7 +48,7 @@ jQuery(document).ready(function ($) {
     // Container
     const $cardContainer = $('<div class="postbox wpte-postbox"></div>');
     const $cardInside = $('<div class="inside wpte-inside"></div>');
-    const $cardTitle = $("<span>Table Export</span>");
+    const $cardTitle = $("<span>Export Options</span>");
 
     // Labels
     const columnsLabel = $(
@@ -64,7 +64,7 @@ jQuery(document).ready(function ($) {
       '<button type="button" class="button" style="display: none;">Remove Selected</button>'
     );
     const exportButton = $(
-      '<button type="button" class="button" style="display: none;">Export Selected</button>'
+      '<button type="button" class="button" style="display: none;">Export</button>'
     );
 
     $cardInside.append($cardTitle);
