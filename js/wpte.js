@@ -57,6 +57,9 @@ jQuery(document).ready(function ($) {
     const rowsLabel = $('<span class="wpte-label">0 rows selected</span>');
 
     // Buttons
+    const keepButton = $(
+      '<button type="button" class="button" style="display: none;">Keep First Text</button>'
+    );
     const selectionButton = $(
       '<button type="button" class="button" style="display: none;">Remove Selected</button>'
     );
@@ -67,12 +70,14 @@ jQuery(document).ready(function ($) {
     $cardInside.append($cardTitle);
     $cardInside.append(columnsLabel);
     $cardInside.append(rowsLabel);
+    $cardInside.append(keepButton);
     $cardInside.append(selectionButton);
     $cardInside.append(exportButton);
     $cardContainer.append($cardInside);
     $table.before($cardContainer);
 
-    let selectedColumns = [],
+    let keepAll = true,
+      selectedColumns = [],
       selectedRows = [];
 
     // Handle column header labels visibility
@@ -145,6 +150,19 @@ jQuery(document).ready(function ($) {
       showButtons($cardInside, selectedColumns, selectedRows);
     });
 
+    // Handle keep button click
+    keepButton.on("click", function (event) {
+      event.preventDefault();
+
+      if (keepAll) {
+        keepAll = false;
+        keepButton.text("Keep All Text");
+      } else {
+        keepAll = true;
+        keepButton.text("Keep First Text");
+      }
+    });
+
     // Handle selection button click
     selectionButton.on("click", function (event) {
       event.preventDefault();
@@ -186,8 +204,16 @@ jQuery(document).ready(function ($) {
             .each(function (colIndex) {
               // Check if column is selected
               if (selectedColumns.includes(colIndex)) {
-                let text = $(this).text().replace(/\s/g, " ").trim();
-                rowData.push('"' + text.replace(/"/g, '""') + '"');
+                let text = keepAll
+                  ? $(this)
+                  : $(this).find("*").filter(":visible:first");
+
+                text = text
+                  .text()
+                  .replace(/\s/g, " ")
+                  .trim()
+                  .replace(/"/g, '""');
+                rowData.push('"' + text + '"');
               }
             });
           data.push(rowData.join(","));
