@@ -30,9 +30,10 @@ jQuery(document).ready(function ($) {
 
   // Function to export selected rows and columns to CSV
   function exportToCSV(data) {
-    const content = "data:text/csv;charset=utf-8," + data.join("\n");
-    const encodedUri = encodeURI(content);
-    const link = document.createElement("a");
+    const universalBOM = "\uFEFF",
+      content = "data:text/csv;charset=utf-8," + universalBOM + data.join("\n"),
+      encodedUri = encodeURI(content),
+      link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "table-export.csv");
     document.body.appendChild(link);
@@ -185,7 +186,7 @@ jQuery(document).ready(function ($) {
             .each(function (colIndex) {
               // Check if column is selected
               if (selectedColumns.includes(colIndex)) {
-                let text = $(this).text().trim();
+                let text = $(this).text().replace(/\s/g, " ").trim();
                 rowData.push('"' + text.replace(/"/g, '""') + '"');
               }
             });
